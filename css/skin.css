@@ -1,0 +1,94 @@
+/*
+ * Skin for the Simplified Travel widget. The mockup's own rules (.day, .stop, .cap, .swap, ...) already style
+ * the markup our templates produce, so this only sets the widget's container to sit on the page like the mockup:
+ * transparent (the page's green shows through), and the mockup's text size and line height.
+ */
+#plan {
+    --st-bg: transparent;
+    --st-text: #243d31;
+    --st-primary: #476b4c;
+    --st-font-family: inherit;
+    --st-font-size: 17px;
+    --st-line-height: 1.5;
+}
+
+/* ---------- Pieces the widget's templates add (js/templates.js) ---------- */
+
+#plan .builder .row { align-items: start; }
+#plan .date, #plan .regen textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid #b9c6b8;
+    border-radius: 6px;
+    background: #fff;
+    color: #263f32;
+    font: inherit;
+}
+#plan .regen textarea { display: block; margin: 0 0 12px; resize: vertical; }
+#plan .date[aria-invalid='true'] { border-color: #a4361c; }
+#plan .form-error { color: #a4361c; font-weight: 600; min-height: 1.5em; margin: 0 0 8px; }
+#plan .form-error:empty { min-height: 0; margin: 0; }
+
+/* Progress and the generator's thoughts */
+#plan .making h2 { margin-bottom: 18px; }
+#plan .meter { display: flex; align-items: center; gap: 14px; margin: 0 0 18px; }
+#plan .meter progress { flex: 1; height: 12px; appearance: none; border: 0; border-radius: 6px; overflow: hidden; background: #dbe5d8; accent-color: #476b4c; }
+#plan .meter progress::-webkit-progress-bar { background: #dbe5d8; }
+#plan .meter progress::-webkit-progress-value { background: #476b4c; border-radius: 6px; transition: width .4s; }
+#plan .meter progress::-moz-progress-bar { background: #476b4c; border-radius: 6px; }
+#plan .pct { font-weight: 700; min-width: 3.2em; text-align: right; color: #284e39; }
+#plan .thoughts { list-style: none; margin: 0 0 18px; padding: 0; }
+#plan .thoughts li { color: #526259; font-size: .93rem; margin: 6px 0; }
+#plan .thoughts li[data-st-age='0'] { color: #243d31; font-size: 1.05rem; font-weight: 600; }
+#plan .thoughts li[data-st-age='2'] { color: #5b6b60; font-size: .85rem; }
+
+/* Result bands: the share/print bar and the "plan a different trip" footer sit on the same green as the plan */
+#plan .result-bar { padding: 24px 0 0; border-bottom: 0; }
+#plan .result-bar .toolbar { margin: 0; }
+#plan .result-bar + .result { border-top: 0; padding-top: 12px; }
+#plan .result-foot { padding: 4px 0 40px; border-top: 0; }
+#plan .result:not(.result-bar):not(.result-foot) { border-bottom: 0; }
+#plan .days { margin-top: 8px; }
+#plan #notice { align-self: center; }
+
+/* Stops */
+#plan .stop .links { display: flex; gap: 16px; flex-wrap: wrap; margin: 6px 0 0; }
+/* Photos and day maps come from ctx.part(); they carry the widget's own st-* classes */
+#plan .st-activity-photo { display: block; width: 120px; height: 120px; object-fit: cover; border-radius: 8px; margin-top: 10px; }
+#plan .st-photo-pending { background: #dbe5d8; }
+#plan .st-day-map { margin: 0 0 16px; }
+#plan .st-map-image { display: block; width: 100%; height: auto; border-radius: 8px; }
+#plan .regen { margin-top: 14px; max-width: 520px; }
+#plan .notes { margin: 8px 0 0; padding-left: 20px; color: #46564b; }
+#plan .notes li { margin: 4px 0; }
+
+/* Messages the widget itself prints outside our templates (a failed or stopped run) */
+#plan > .st-error, #plan > .st-notice {
+    width: min(1160px, calc(100% - 72px));
+    margin: 4px auto 24px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+#plan > .st-error { background: #fbeae5; color: #7d2915; border: 1px solid #e3b4a6; }
+#plan > .st-notice { background: #edf1e9; color: #405c41; border: 1px solid #ced8ca; }
+@media (max-width: 900px) { #plan > .st-error, #plan > .st-notice { width: calc(100% - 48px); } }
+@media (max-width: 720px) { #plan > .st-error, #plan > .st-notice { width: calc(100% - 36px); } }
+
+@media print {
+    .result-bar, .result-foot, .regen, .swap, .st-photo-pending { display: none !important; }
+}
+
+/* The widget resets heading fonts and spacing inside its root (to survive host themes); put the mockup's back */
+#plan h2, #plan h3 { font-family: Georgia, serif; font-weight: 700; margin: 0; }
+#plan h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); line-height: 1.13; letter-spacing: -.04em; }
+#plan .day h3 { font-size: 1.55rem; letter-spacing: -.03em; }
+#plan .side h3 { font-size: 1.7rem; letter-spacing: -.04em; line-height: 1.2; }
+#plan .stop h4 { font-family: "Work Sans", Arial, sans-serif; font-size: 1.08rem; font-weight: 700; letter-spacing: 0; line-height: 1.5; }
+
+/* Restart sits at the right end of the Share / Print row; the footer one is only for runs with no bar */
+#plan .restart-top { margin-left: auto; }
+#plan .result-bar ~ .result-foot { display: none; }
+#plan .result-bar .toolbar { align-items: center; }
+#plan .stop h4 { margin: 0; }
