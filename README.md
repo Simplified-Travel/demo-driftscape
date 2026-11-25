@@ -17,7 +17,7 @@ python3 -m http.server 5190      # or any static server
 open http://localhost:5190/
 ```
 
-It must be served over http. `config.js` is git-ignored.
+It must be served over http. `config.js` is committed: it points at the development platform and holds only public values.
 
 ## Layout
 
