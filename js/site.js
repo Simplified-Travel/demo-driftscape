@@ -58,65 +58,12 @@
         });
     }
 
-    /* ---------- The visitor ---------- */
-
-    // The widget signs the visitor in anonymously by itself, but it does not hand us that session, and we need the
-    // visitor's token to read the planner's experiences (below). So we bring our own `auth` (the SDK's documented
-    // hook): the same anonymous Supabase sign-up, kept under our own storage key. `reset()` is "Restart".
-    function createVisitorAuth(config) {
-        var key = 'driftscape-session';
-        var base = config.supabaseUrl.replace(/\/+$/, '') + '/auth/v1';
-        var pending;
-
-        function read() { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
-        function write(session) { try { localStorage.setItem(key, JSON.stringify(session)); } catch (e) {} }
-
-        async function call(path, body) {
-            var response = await fetch(base + path, {
-                method: 'POST',
-                headers: { apikey: config.supabaseKey, 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            });
-            if (!response.ok) throw new Error('Sign-in failed (' + response.status + ')');
-            var data = await response.json();
-            return {
-                access_token: data.access_token,
-                refresh_token: data.refresh_token,
-                expires_at: data.expires_at || Math.floor(Date.now() / 1000) + Number(data.expires_in || 3600),
-            };
-        }
-
-        async function obtain() {
-            var current = read();
-            if (current && current.access_token && current.expires_at - 60 > Date.now() / 1000) return current;
-            var session;
-            if (current && current.refresh_token) {
-                try { session = await call('/token?grant_type=refresh_token', { refresh_token: current.refresh_token }); } catch (e) {}
-            }
-            session = session || await call('/signup', { data: {}, gotrue_meta_security: {} });
-            write(session);
-            return session;
-        }
-
-        return {
-            async headers() {
-                pending = pending || obtain().finally(function () { pending = undefined; });
-                var session = await pending;
-                return { Authorization: 'Bearer ' + session.access_token };
-            },
-            reset() {
-                pending = undefined;
-                try { localStorage.removeItem(key); } catch (e) {}
-            },
-        };
-    }
-
     /* ---------- Driftscape experiences ---------- */
 
     // Each stop in a plan may be one of the planner's experiences (`experience_id`). The plan does not say where the
     // experience lives online, so after each draw we ask the platform for the ones we have not seen, keep them in
     // window.DRIFTSCAPE_EXPERIENCES (read by js/templates.js) and draw again so the banners appear.
-    function watchExperiences(widget, config, auth) {
+    function watchExperiences(widget, config) {
         var cache = window.DRIFTSCAPE_EXPERIENCES;
         var asked = new Set();
 
@@ -128,7 +75,7 @@
             ids.forEach(function (id) { asked.add(id); });
 
             try {
-                var headers = Object.assign({ Accept: 'application/vnd.api+json', 'X-SimplifiedTravel-Planner': config.planner }, await auth.headers());
+                var headers = Object.assign({ Accept: 'application/vnd.api+json', 'X-SimplifiedTravel-Planner': config.planner }, await widget.headers());
                 // One request per experience: the platform's list endpoint fails for a signed-in visitor (it filters
                 // on a column experiences do not have), but reading one by id works.
                 await Promise.all(ids.map(async function (id) {
@@ -163,7 +110,6 @@
             return;
         }
 
-        var auth = createVisitorAuth(config);
         var widget = await SimplifiedTravel.mount($('plan'), {
             mode: 'kiosk',
             flow: 'survey',
@@ -172,12 +118,11 @@
             supabaseUrl: config.supabaseUrl,
             supabaseKey: config.supabaseKey,
             realtimeUrl: config.realtimeUrl,
-            auth: auth,
             maxDays: config.maxDays,
             locale: 'en',
         });
 
-        watchExperiences(widget, config, auth);
+        watchExperiences(widget, config);
 
         // After a plan finishes or the visitor starts again, keep the page where they are looking
         widget.on('plan.created', function () { $('plan').scrollIntoView({ behavior: 'smooth' }); });

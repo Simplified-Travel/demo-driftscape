@@ -56,6 +56,8 @@ the day map; tests cover each; the guide shows a copy-paste example.
 
 ## P1. Give templates the data they are missing (SDK, `packages/widget`, `packages/ui`)
 
+> **DONE: PR #22.** `plan` gets `id`, `status`, `request`, `actions` (place with `ctx.render('actions', view.actions)`; default placement unchanged); `progress` gets `values`; `restart` gets `{ failed }`. This site uses all of them. Not run: a failed run, the conversation flow.
+
 **Problem.** Each kiosk state is a separate template with its own narrow data (`kioskMarkup` in `packages/widget/src/index.ts`):
 - `progress` gets no survey values, so it cannot say "Building your plan for Dec 4 to 5".
 - `plan` gets `{ days, lists }` plus regeneration and media, but not the plan id, request (dates, travelers) or status; I derived dates from the days.
@@ -71,6 +73,8 @@ differ. Update `TemplateData` types, the guide's template table and `skin-guide.
 **Removes from this site.** The date derivation in `plan`, the separate `result-bar` band, the CSS that hides the footer restart behind the bar.
 
 ## P1. Expose the visitor's session (SDK, `packages/core`, `packages/widget`)
+
+> **DONE: PR #23.** `widget.headers()` and `SimplifiedTravel.createAnonymousAuth` (also `AuthProvider`, `AnonymousAuthOptions` types). This site now uses `widget.headers()`; `createVisitorAuth()` is gone.
 
 **Problem.** The widget signs the visitor in anonymously (`createAnonymousAuth`, `packages/core/src/auth.ts`) but keeps the session private. A host that needs the
 visitor's token for other platform calls (here, reading an experience) has to copy the whole sign-up and refresh logic and pass it as the `auth` option, which I did
