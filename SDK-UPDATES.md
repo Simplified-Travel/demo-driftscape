@@ -15,7 +15,7 @@ SDK PRs #20 to #23 are merged, and this site (PR #1 here) uses them; its `vendor
 | 2 | Export the parts a skin copies | Done, one follow-up: `ctx.part('regenerate' \| 'photo' \| 'map')` (SDK #21). This site still has its own Regenerate markup; needs a class or wrapper option |
 | 3 | Data templates were missing | Done (SDK #22): `plan` gets `id`, `status`, `request`, `actions`; `progress` gets `values`; `restart` gets `{ failed }` |
 | 4 | Expose the visitor's session | Done (SDK #23): `widget.headers()`, `createAnonymousAuth` exported |
-| 5 | Platform: experience on plan activities | Code done: st-platform #81 (merged; **not yet on the dev platform when checked 2026-11-26**) and SDK types PR #24. This site's draft PR switches to `a.experience` and deletes `watchExperiences()`; merge it only after #81 is deployed to dev, then check a fresh plan's activities carry `experience.external_url` and the banners still link (not verified live yet) |
+| 5 | Platform: experience on plan activities | Done and verified on the **local** platform (2026-11-26): st-platform #81, SDK types #24, this site reads `a.experience` (#3). A real plan had `experience` on all 6 stops (4 with `external_url`, 1 Driftscape experience without one, 1 `null`), banners on the first draw, no console errors. **Still to do: deploy #81 to the dev platform** (checked twice: not there yet), or the deployed demo shows no banners |
 | 6 | Platform: fix `GET /api/v1/experiences` | Not started |
 | 7 | "Build a theme" guide | Not started. Write it after the remaining SDK items; extend `skin-guide.test.ts` to check it |
 | 8 to 11 | P2: text hook, guide patterns, state attribute, progress | Not started |
