@@ -6,8 +6,7 @@ change, where, and how to know it is done.
 
 ## Status (updated 2026-11-26)
 
-SDK PRs #20 to #23 are merged, and this site (PR #1 here) uses them; its `vendor/plan-widget.js` is the build from SDK `main` (19.7 KB gzip, so about
-0.3 KB of the 20 KB budget is left).
+SDK PRs #20 to #24 are merged, and this site (PR #1 here) uses them; its `vendor/plan-widget.js` is the build from SDK `main` (19.7 KB gzip). **The 20 KB budget is now nearly gone:** with `transformText` (#25) the bundle is 20,443 of 20,480 bytes, so the next feature needs the budget raised or code moved out.
 
 | # | Item | State |
 |---|---|---|
@@ -16,9 +15,10 @@ SDK PRs #20 to #23 are merged, and this site (PR #1 here) uses them; its `vendor
 | 3 | Data templates were missing | Done (SDK #22): `plan` gets `id`, `status`, `request`, `actions`; `progress` gets `values`; `restart` gets `{ failed }` |
 | 4 | Expose the visitor's session | Done (SDK #23): `widget.headers()`, `createAnonymousAuth` exported |
 | 5 | Platform: experience on plan activities | Done and verified on the **local** platform (2026-11-26): st-platform #81, SDK types #24, this site reads `a.experience` (#3). A real plan had `experience` on all 6 stops (4 with `external_url`, 1 Driftscape experience without one, 1 `null`), banners on the first draw, no console errors. **Still to do: deploy #81 to the dev platform** (checked twice: not there yet), or the deployed demo shows no banners |
-| 6 | Platform: fix `GET /api/v1/experiences` | Not started |
+| 6 | Platform: fix `GET /api/v1/experiences` | Fixed in st-platform #82 (verified on local Sail with a visitor token: 200 with the planner header, empty without). **Found, not fixed:** `filter[id]=a,b` is ignored over HTTP on this endpoint (returns the whole list), and `ActivitySchema::indexQuery` has the same `user_id` bug |
 | 7 | "Build a theme" guide | Not started. Write it after the remaining SDK items; extend `skin-guide.test.ts` to check it |
-| 8 to 11 | P2: text hook, guide patterns, state attribute, progress | Not started |
+| 8 | P2: text hook | SDK part in PR #25 (`transformText`). Then switch this site (delete `term()` in `js/templates.js`) after it is merged. The platform's own "itinerary" thought text is still to change (not started) |
+| 9 to 11 | P2: guide patterns, state attribute, progress | Not started |
 | 12 | P3: smaller things | Not started |
 
 Still unverified in the site (carried from the PR #1 description): a failed run (the "Try again" footer), Stop, Share, print preview, narrow widths, a full
