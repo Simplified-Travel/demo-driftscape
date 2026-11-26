@@ -23,7 +23,7 @@ SDK PRs #20 to #23 are merged, and this site (PR #1 here) uses them; its `vendor
 
 Still unverified in the site (carried from the PR #1 description): a failed run (the "Try again" footer), Stop, Share, print preview, narrow widths, a full
 Swap stop run, and photos that filled slowly in some runs. The site's `config.js` is committed and points at `https://api.development.simplified.travel`;
-that platform allows `http://localhost:5190` through CORS, so local testing uses the dev API, not Sail. The "workaround this removes" lines below are done
+that platform allows `http://localhost:5190` through CORS, so with no `config.local.js` the site uses the dev API. The "workaround this removes" lines below are done
 for items 1, 3 and 4 and partly for 2. Items 5 (SDK half) and 6 are what remains of the site's own workarounds (the per-experience fetch in `js/site.js`).
 
 ## Read first (for the agent doing this work)
@@ -35,7 +35,7 @@ for items 1, 3 and 4 and partly for 2. Items 5 (SDK half) and 6 are what remains
   `packages/ui/test/skin-guide.test.ts`, so a new template field, text key or class must be added to the guide in the same change.
   Run `npm test`, `npm run typecheck`, `npm run build && npm run size` before finishing.
 - The consumer to check against is this folder. After an SDK change, copy `packages/widget/dist/plan-widget.js` to
-  `demo-driftscape/vendor/` and run the site (`python3 -m http.server 5190`; `config.js` is committed and uses the dev platform, planner `bayoffundy`; point `apiUrl` at `http://localhost` to use Sail, but do not commit that).
+  `demo-driftscape/vendor/` and run the site (`python3 -m http.server 5190`; `config.js` is committed and uses the dev platform, planner `bayoffundy`; for Sail, copy `config.local.example.js` to `config.local.js` (git-ignored, loaded only on localhost; never edit the committed `config.js` for this)).
   Each item below says which workaround in this site it should let us delete.
 - A real generation takes about 45 s and costs LLM budget: unit-test first, and do one live run at the end.
 

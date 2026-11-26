@@ -12,12 +12,17 @@ Needs the local platform running (Sail, `http://localhost`) with a planner whose
 locked), and the shared queue workers so generation completes.
 
 ```sh
-cp config.example.js config.js   # fill in the Supabase and realtime values (the SDK's playground/kiosk.config.js has them)
-python3 -m http.server 5190      # or any static server
+cp config.local.example.js config.local.js   # points the page at the local platform (Sail) instead of dev
+python3 -m http.server 5190                  # or any static server
 open http://localhost:5190/
 ```
 
-It must be served over http. `config.js` is committed: it points at the development platform and holds only public values.
+It must be served over http. `config.js` is committed: it points at the **development platform** (that is what the deployed
+demo uses) and holds only public values. For local work, `config.local.js` (git-ignored, from `config.local.example.js`) overrides
+any of those values, usually just `apiUrl`; the page loads it only on `localhost` or `127.0.0.1`, never on the deployed site.
+There is no `.env`: this is a static site with no build step, and anything the page uses is visible in the browser, so keep real
+secrets out of both files. Browsers cache these scripts, so hard-reload (or clear site data) after changing either one.
+If `config.js` is missing, copy `config.example.js` to `config.js`.
 
 ## Layout
 
