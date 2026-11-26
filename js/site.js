@@ -1,10 +1,10 @@
 /*
  * Fundy Footsteps & Flavours: plan builder.
  *
- * The widget runs in kiosk mode against the local platform (planner "bayoffundy"; its destination is locked in the
+ * The widget runs in kiosk mode against the platform in config.js (planner "bayoffundy"; its destination is locked in the
  * planner, so the visitor only chooses dates). It owns everything under <main id="plan">: the date form, the
- * progress, the finished plan, regenerate, share and print. js/templates.js is its markup. This file only loads
- * the visitor's session and the Driftscape experience lookup, mounts the widget, and runs the page's own menu and search.
+ * progress, the finished plan, regenerate, share and print. js/templates.js is its markup. This file only mounts the
+ * widget and runs the page's own menu and search.
  */
 (function () {
     'use strict';
@@ -58,47 +58,6 @@
         });
     }
 
-    /* ---------- Driftscape experiences ---------- */
-
-    // Each stop in a plan may be one of the planner's experiences (`experience_id`). The plan does not say where the
-    // experience lives online, so after each draw we ask the platform for the ones we have not seen, keep them in
-    // window.DRIFTSCAPE_EXPERIENCES (read by js/templates.js) and draw again so the banners appear.
-    function watchExperiences(widget, config) {
-        var cache = window.DRIFTSCAPE_EXPERIENCES;
-        var asked = new Set();
-
-        async function load() {
-            var ids = Array.from(new Set(Array.from(document.querySelectorAll('#plan [data-experience]'))
-                .map(function (node) { return node.dataset.experience; })
-                .filter(function (id) { return id && !asked.has(id); })));
-            if (!ids.length) return;
-            ids.forEach(function (id) { asked.add(id); });
-
-            try {
-                var headers = Object.assign({ Accept: 'application/vnd.api+json', 'X-SimplifiedTravel-Planner': config.planner }, await widget.headers());
-                // One request per experience: the platform's list endpoint fails for a signed-in visitor (it filters
-                // on a column experiences do not have), but reading one by id works.
-                await Promise.all(ids.map(async function (id) {
-                    var response = await fetch(config.apiUrl.replace(/\/+$/, '') + '/api/v1/experiences/' + encodeURIComponent(id)
-                        + '?fields%5Bexperiences%5D=title,externalUrl,synchronizationSource', { headers: headers });
-                    if (!response.ok) return;
-                    var attributes = (await response.json()).data.attributes;
-                    cache[id] = {
-                        title: attributes.title,
-                        externalUrl: attributes.externalUrl,
-                        synchronizationSource: attributes.synchronizationSource,
-                    };
-                }));
-                widget.render();
-            } catch (e) {
-                // No banner is better than a broken page
-            }
-        }
-
-        widget.on('rendered', load);
-        load();
-    }
-
     /* ---------- Start up ---------- */
 
     async function start() {
@@ -121,8 +80,6 @@
             maxDays: config.maxDays,
             locale: 'en',
         });
-
-        watchExperiences(widget, config);
 
         // After a plan finishes or the visitor starts again, keep the page where they are looking
         widget.on('plan.created', function () { $('plan').scrollIntoView({ behavior: 'smooth' }); });

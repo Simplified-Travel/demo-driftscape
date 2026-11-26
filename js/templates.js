@@ -18,10 +18,10 @@
     // An activity that is one of the planner's experiences carries an `experience_id`. site.js looks those up
     // (GET /experiences) and keeps them here by id: { title, externalUrl, synchronizationSource }. A stop whose
     // experience came from Driftscape gets the banner, linked to the experience's external URL when it has one.
-    window.DRIFTSCAPE_EXPERIENCES = window.DRIFTSCAPE_EXPERIENCES || {};
+    // The platform puts the stop's experience on the stop itself: { id, title, external_url, synchronization_source, image_url }
     function driftscapeExperience(activity) {
-        var exp = activity.experience_id && window.DRIFTSCAPE_EXPERIENCES[activity.experience_id];
-        return exp && exp.synchronizationSource === 'driftscape' ? exp : null;
+        var exp = activity.experience;
+        return exp && exp.synchronization_source === 'driftscape' ? exp : null;
     }
 
     /* ---------- Shared pieces ---------- */
@@ -240,7 +240,7 @@
                 var banner = '';
                 var experience = driftscapeExperience(a);
                 if (experience) {
-                    var href = safeUrl(experience.externalUrl);
+                    var href = safeUrl(experience.external_url);
                     var img = html`<img src="assets/driftscape-banner.png" alt="${href ? 'Explore ' + name + ' with Driftscape (opens a new tab)' : 'Driftscape'}">`;
                     banner = href
                         ? html`<a class="dslink" href="${href}" target="_blank" rel="noopener">${img}</a>`
@@ -249,7 +249,7 @@
 
                 var regen = regenerateMarkup(a, ctx, a, name);
                 return html`
-                    <div class="stop" data-st="activity" data-st-key="activity-${a.date}-${a.id}" data-st-activity-id="${a.id}" data-experience="${a.experience_id || ''}">
+                    <div class="stop" data-st="activity" data-st-key="activity-${a.date}-${a.id}" data-st-activity-id="${a.id}">
                         <span class="cap">Stop ${a.id}</span>
                         <div>
                             <h4>${name}</h4>
