@@ -18,6 +18,10 @@
 <!-- The Simplified Travel SDK: one classic script, no framework. -->
 <script src="vendor/plan-widget.js"></script>
 <script src="config.js"></script>
+<script>
+    // Local overrides (git-ignored config.local.js), only when served from this machine: the deployed site never asks for it
+    if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.write('<script src="config.local.js"><\/script>');
+</script>
 <script src="js/templates.js"></script>
 <script src="js/site.js"></script>
 </body>
