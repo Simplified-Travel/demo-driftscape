@@ -17,7 +17,7 @@ SDK PRs #20 to #24 are merged, and this site (PR #1 here) uses them; its `vendor
 | 5 | Platform: experience on plan activities | Done and verified on the **local** platform (2026-11-26): st-platform #81, SDK types #24, this site reads `a.experience` (#3). A real plan had `experience` on all 6 stops (4 with `external_url`, 1 Driftscape experience without one, 1 `null`), banners on the first draw, no console errors. **Still to do: deploy #81 to the dev platform** (checked twice: not there yet), or the deployed demo shows no banners |
 | 6 | Platform: fix `GET /api/v1/experiences` | Fixed in st-platform #82 (verified on local Sail with a visitor token: 200 with the planner header, empty without). **Found, not fixed:** `filter[id]=a,b` is ignored over HTTP on this endpoint (returns the whole list), and `ActivitySchema::indexQuery` has the same `user_id` bug |
 | 7 | "Build a theme" guide | Not started. Write it after the remaining SDK items; extend `skin-guide.test.ts` to check it |
-| 8 | P2: text hook | SDK part in PR #25 (`transformText`). Then switch this site (delete `term()` in `js/templates.js`) after it is merged. The platform's own "itinerary" thought text is still to change (not started) |
+| 8 | P2: text hook | Done: `transformText` (SDK #25), used by this site (`term()` is gone). The generator's own wording is out of scope: "itinerary" comes from the AI, so the hook is the answer, not a platform change |
 | 9 to 11 | P2: guide patterns, state attribute, progress | Not started |
 | 12 | P3: smaller things | Not started |
 
@@ -168,7 +168,7 @@ say it too (for example "Print out a physical copy of your itinerary"). The SDK 
 `js/templates.js` (`term()`), which is easy to forget in one template.
 
 **Change.** Add an option (for example `transformText(text, kind)` with `kind` of `thought`, `details`, `list-item`, `title`) applied by the renderer and the
-progress path before the strings reach templates; document it. Separately, in `st-platform` change the thought prefix away from "itinerary" (already noted in `PLAN.md`).
+progress path before the strings reach templates; document it. (Changing the generator's own wording is out of scope: it comes from the AI.)
 
 **Done when.** A host sets one function and no template needs its own replace; unit-tested on a thought and an activity.
 **Removes from this site.** `term()` and its call sites.
