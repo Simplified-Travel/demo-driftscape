@@ -44,11 +44,9 @@
 #plan .thoughts li[data-st-age='2'] { color: #5b6b60; font-size: .85rem; }
 
 /* Result bands: the share/print bar and the "plan a different trip" footer sit on the same green as the plan */
-#plan .result-bar { padding: 24px 0 0; border-bottom: 0; }
-#plan .result-bar .toolbar { margin: 0; }
-#plan .result-bar + .result { border-top: 0; padding-top: 12px; }
 #plan .result-foot { padding: 4px 0 40px; border-top: 0; }
-#plan .result:not(.result-bar):not(.result-foot) { border-bottom: 0; }
+#plan .result:not(.result-foot) { border-bottom: 0; }
+#plan .result > .wrap > .toolbar { margin: 0 0 18px; }
 #plan .days { margin-top: 8px; }
 #plan #notice { align-self: center; }
 
@@ -77,7 +75,7 @@
 @media (max-width: 720px) { #plan > .st-error, #plan > .st-notice { width: calc(100% - 36px); } }
 
 @media print {
-    .result-bar, .result-foot, .regen, .swap, .st-photo-pending { display: none !important; }
+    .result-foot, .regen, .swap, .st-photo-pending { display: none !important; }
 }
 
 /* The widget resets heading fonts and spacing inside its root (to survive host themes); put the mockup's back */
@@ -89,6 +87,5 @@
 
 /* Restart sits at the right end of the Share / Print row; the footer one is only for runs with no bar */
 #plan .restart-top { margin-left: auto; }
-#plan .result-bar ~ .result-foot { display: none; }
-#plan .result-bar .toolbar { align-items: center; }
+#plan .toolbar { align-items: center; }
 #plan .stop h4 { margin: 0; }

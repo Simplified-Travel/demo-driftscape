@@ -82,6 +82,10 @@
         };
     }
 
+    function dateRange(ctx, arrive, depart) {
+        return depart && depart !== arrive ? ctx.formatDate(arrive) + ' to ' + ctx.formatDate(depart) : ctx.formatDate(arrive);
+    }
+
     function timeRange(a) {
         return a.start_time ? (a.end_time ? a.start_time + ' – ' + a.end_time : a.start_time) : '';
     }
@@ -91,6 +95,7 @@
     SimplifiedTravel.configure({
         messages: {
             'start again': 'Restart',
+            'try again': 'Try again',
             regenerate: 'Swap stop',
             'regenerate title': 'Swap this stop',
             'create plan': 'Build my plan',
@@ -136,6 +141,9 @@
                     <div class="making" data-st="progress" role="status">
                         <span class="over">Plan builder</span>
                         <h2>${ctx.t(view.label || 'generating')}</h2>
+                        ${view.values && view.values.arrive
+                            ? html`<p class="byline">Building your plan for ${dateRange(ctx, view.values.arrive, view.values.depart)}</p>`
+                            : ''}
                         ${known
                             ? html`<div class="meter">
                                   <progress max="100" value="${percent}" aria-label="Plan progress">${percent}%</progress>
@@ -157,21 +165,17 @@
                 `);
             },
 
-            // Share and Print, above the finished plan, with the widget's own "link copied" note.
+            // Share and Print, inside the plan's own section (the plan template places it), with the widget's "link copied" note.
             actions: function (view, ctx) {
                 return html`
-                    <div class="result result-bar">
-                        <div class="wrap">
-                            <div class="toolbar" data-st="actions">
-                                ${view.share ? html`<button type="button" data-st-action="share">${ctx.t('share')}</button>` : ''}
-                                ${view.print ? html`<button type="button" data-st-action="print">${ctx.t('print')}</button>` : ''}
-                                <button type="button" class="restart-top" data-st="restart">${ctx.t('start again')}</button>
-                                <span id="notice" role="status">${view.note === 'copied' ? ctx.t('link copied') : view.note === 'manual' ? ctx.t('copy link') : ''}</span>
-                                ${view.note === 'manual' && view.link
-                                    ? html`<input class="date" readonly value="${view.link}" aria-label="${ctx.t('link label')}" onfocus="this.select()">`
-                                    : ''}
-                            </div>
-                        </div>
+                    <div class="toolbar" data-st="actions">
+                        ${view.share ? html`<button type="button" data-st-action="share">${ctx.t('share')}</button>` : ''}
+                        ${view.print ? html`<button type="button" data-st-action="print">${ctx.t('print')}</button>` : ''}
+                        <button type="button" class="restart-top" data-st="restart">${ctx.t('start again')}</button>
+                        <span id="notice" role="status">${view.note === 'copied' ? ctx.t('link copied') : view.note === 'manual' ? ctx.t('copy link') : ''}</span>
+                        ${view.note === 'manual' && view.link
+                            ? html`<input class="date" readonly value="${view.link}" aria-label="${ctx.t('link label')}" onfocus="this.select()">`
+                            : ''}
                     </div>
                 `;
             },
@@ -179,18 +183,18 @@
             plan: function (view, ctx) {
                 if (view.days.length === 0 && view.lists.length === 0) return '';
                 var stops = view.days.reduce(function (n, d) { return n + d.activities.length; }, 0);
-                var first = view.days[0] && view.days[0].date;
-                var last = view.days.length ? view.days[view.days.length - 1].date : '';
+                var dates = view.request && view.request.attributes && view.request.attributes.travel_dates;
                 var summary = [
                     view.days.length + (view.days.length === 1 ? ' day' : ' days'),
                     stops + (stops === 1 ? ' stop' : ' stops'),
-                    first && last && first !== last ? ctx.formatDate(first) + ' to ' + ctx.formatDate(last) : first ? ctx.formatDate(first) : '',
+                    dates && dates.arrive ? dateRange(ctx, dates.arrive, dates.depart) : '',
                     'Self-drive',
                 ].filter(Boolean).join(' · ');
 
                 return html`
                     <section class="result" data-st="plan">
                         <div class="wrap">
+                            ${ctx.render('actions', view.actions || { share: false, print: false })}
                             <div class="dayhead">
                                 <div>
                                     <span class="over">Your sample plan</span>
@@ -274,12 +278,13 @@
                 `;
             },
 
-            // Plan a different trip: signs the visitor out and shows the form again
-            restart: function (_data, ctx) {
+            // After a failed run: try again. After a finished plan the toolbar above the plan has Restart.
+            restart: function (view, ctx) {
+                if (!view.failed) return '';
                 return html`
                     <div class="result result-foot">
                         <div class="wrap">
-                            <button class="secondary" type="button" data-st="restart">${ctx.t('start again')}</button>
+                            <button class="secondary" type="button" data-st="restart">${ctx.t('try again')}</button>
                         </div>
                     </div>
                 `;
