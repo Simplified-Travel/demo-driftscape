@@ -145,8 +145,11 @@
                             : ''}
                         ${known
                             ? html`<div class="meter">
-                                  <progress max="100" value="${percent}" aria-label="Plan progress">${percent}%</progress>
-                                  <span class="pct">${percent}%</span>
+                                  ${view.indeterminate
+                                      // The platform has only said it started (10), then says nothing for about 30 s: a moving bar, no number
+                                      ? html`<progress max="100" aria-label="Plan progress"></progress>`
+                                      : html`<progress max="100" value="${percent}" aria-label="Plan progress">${percent}%</progress>
+                                  <span class="pct">${percent}%</span>`}
                               </div>`
                             : ''}
                         ${thoughts.length
@@ -193,7 +196,7 @@
                 return html`
                     <section class="result" data-st="plan">
                         <div class="wrap">
-                            ${ctx.render('actions', view.actions || { share: false, print: false })}
+                            ${view.actions || (view.status && view.status !== 'processing') ? ctx.render('actions', view.actions || { share: false, print: false }) : ''}
                             <div class="dayhead">
                                 <div>
                                     <span class="over">Your sample plan</span>

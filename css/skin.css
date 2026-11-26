@@ -37,6 +37,10 @@
 #plan .meter progress::-webkit-progress-bar { background: #dbe5d8; }
 #plan .meter progress::-webkit-progress-value { background: #476b4c; border-radius: 6px; transition: width .4s; }
 #plan .meter progress::-moz-progress-bar { background: #476b4c; border-radius: 6px; }
+#plan .meter progress:indeterminate { background: linear-gradient(90deg, #dbe5d8 0, #476b4c 50%, #dbe5d8 100%) 0 0 / 200% 100%; animation: meter-slide 1.4s linear infinite; }
+#plan .meter progress:indeterminate::-webkit-progress-bar { background: transparent; }
+@keyframes meter-slide { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { #plan .meter progress:indeterminate { animation: none; } }
 #plan .pct { font-weight: 700; min-width: 3.2em; text-align: right; color: #284e39; }
 #plan .thoughts { list-style: none; margin: 0 0 18px; padding: 0; }
 #plan .thoughts li { color: #526259; font-size: .93rem; margin: 6px 0; }
