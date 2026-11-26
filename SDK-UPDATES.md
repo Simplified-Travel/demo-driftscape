@@ -6,7 +6,7 @@ change, where, and how to know it is done.
 
 ## Status (updated 2026-11-26)
 
-SDK PRs #20 to #24 are merged, and this site (PR #1 here) uses them; its `vendor/plan-widget.js` is the build from SDK `main` (19.7 KB gzip). **The 20 KB budget is now nearly gone:** with `transformText` (#25) the bundle is 20,443 of 20,480 bytes, so the next feature needs the budget raised or code moved out.
+SDK PRs #20 to #26 are merged (#27 to #29 are open), and this site (PR #1 here) uses them; its `vendor/plan-widget.js` is the build from SDK `main` (18.8 KB gzip). The conversation flow is now its own script, `plan-widget-conversation.js` (#26), so the main script is back under its 20 KB budget; each script has its own budget in `npm run size`.
 
 | # | Item | State |
 |---|---|---|
@@ -18,7 +18,9 @@ SDK PRs #20 to #24 are merged, and this site (PR #1 here) uses them; its `vendor
 | 6 | Platform: fix `GET /api/v1/experiences` | Fixed in st-platform #82 (verified on local Sail with a visitor token: 200 with the planner header, empty without). **Found, not fixed:** `filter[id]=a,b` is ignored over HTTP on this endpoint (returns the whole list), and `ActivitySchema::indexQuery` has the same `user_id` bug |
 | 7 | "Build a theme" guide | Not started. Write it after the remaining SDK items; extend `skin-guide.test.ts` to check it |
 | 8 | P2: text hook | Done: `transformText` (SDK #25), used by this site (`term()` is gone). The generator's own wording is out of scope: "itinerary" comes from the AI, so the hook is the answer, not a platform change |
-| 9 to 11 | P2: guide patterns, state attribute, progress | Not started |
+| 9 | P2: guide patterns | SDK PR #29 (docs: "8. Patterns for a custom skin") |
+| 10 | P2: state attribute | SDK PR #27 (`data-st-state`) |
+| 11 | P2: progress visibly alive | SDK PR #28 (`progress.indeterminate`; the platform's real timings are in the SDK's `PLAN.md`: 10 at 7 s, nothing until 90 at 39 s). **Then:** this site's `progress` template should honour `view.indeterminate` (no `%` text, a moving bar) after the SDK is rebuilt into `vendor/` |
 | 12 | P3: smaller things | Not started |
 
 Still unverified in the site (carried from the PR #1 description): a failed run (the "Try again" footer), Stop, Share, print preview, narrow widths, a full
