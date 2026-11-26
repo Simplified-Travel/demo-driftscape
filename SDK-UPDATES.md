@@ -16,12 +16,12 @@ SDK PRs #20 to #26 are merged ; #27 to #29 too, and this site (PR #1 here) uses 
 | 4 | Expose the visitor's session | Done (SDK #23): `widget.headers()`, `createAnonymousAuth` exported |
 | 5 | Platform: experience on plan activities | Done and verified on the **local** platform (2026-11-26): st-platform #81, SDK types #24, this site reads `a.experience` (#3). A real plan had `experience` on all 6 stops (4 with `external_url`, 1 Driftscape experience without one, 1 `null`), banners on the first draw, no console errors. **Still to do: deploy #81 to the dev platform** (checked twice: not there yet), or the deployed demo shows no banners |
 | 6 | Platform: fix `GET /api/v1/experiences` | Fixed in st-platform #82 (verified on local Sail with a visitor token: 200 with the planner header, empty without). **Found, not fixed:** `filter[id]=a,b` is ignored over HTTP on this endpoint (returns the whole list), and `ActivitySchema::indexQuery` has the same `user_id` bug |
-| 7 | "Build a theme" guide | Not started. Write it after the remaining SDK items; extend `skin-guide.test.ts` to check it |
+| 7 | "Build a theme" guide | Done (SDK #30: `docs/build-a-theme.md`, checked by `build-a-theme.test.ts`). Not yet tried by a fresh agent |
 | 8 | P2: text hook | Done: `transformText` (SDK #25), used by this site (`term()` is gone). The generator's own wording is out of scope: "itinerary" comes from the AI, so the hook is the answer, not a platform change |
 | 9 | P2: guide patterns | Done (SDK #29) |
 | 10 | P2: state attribute | Done (SDK #27: `data-st-state`) |
 | 11 | P2: progress visibly alive | Done (SDK #28: `progress.indeterminate`); this site shows a moving bar with no number while it is true, verified live. The platform still reports 10 at 7 s, nothing until 90 at 39 s |
-| 12 | P3: smaller things | Not started |
+| 12 | P3: smaller things | SDK PR #31: static mode with only `plannerUrl`, a `try again` label, how to get the build and the platform values (README). **Not done:** day-level data (low priority). **Your decision:** how an outside developer gets a pinned build (public releases, an npm tarball, or the current `gh` access); also the latest release v0.2.0 predates all of this work, so a new tag is needed (not pushed) |
 
 Still unverified in the site (carried from the PR #1 description): a failed run (the "Try again" footer), Stop, Share, print preview, narrow widths, a full
 Swap stop run, and photos that filled slowly in some runs. The site's `config.js` is committed and points at `https://api.development.simplified.travel`;
@@ -216,14 +216,9 @@ for `plan.created` only.
 
 ## P3. Smaller things
 
-- **Static mode without a plan file.** Allow `plannerUrl` alone (the plan comes from `setPlan`); today an empty plan file is required (`createStaticSource` in `core/source.ts`).
-- **`restart` label default.** "Start again" is generic; consider separate keys for "restart" and "try again".
-- **Distribution.** The repo is private and releases need `gh` access; this site copied `dist/plan-widget.js` from a working tree. Decide how an outside developer gets a pinned
-  build (a public release asset, an npm tarball, or documented `gh release download` access) and put it in the README.
-- **Config hand-off.** A kiosk page needs the Supabase URL and key and the realtime URL. `playground/kiosk.config.example.js` shows them; mention in the guide that the client
-  is given these values (they are public).
-- **Day-level data.** Round 1 needed a day title that is not a date. If plans ever have named or undated days, `groupSchedule` should allow it. Low priority now that real
-  plans have dates.
+Done in SDK #31, except as noted in the status table: static mode without a plan file, the separate "try again" label,
+and the distribution and config hand-off notes (README). Open: day-level data (named or undated days), low priority now
+that real plans have dates; and the decision on how an outside developer gets a pinned build.
 
 ## Not verified in this build (check before relying on them)
 
