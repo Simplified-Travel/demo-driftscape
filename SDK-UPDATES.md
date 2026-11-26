@@ -15,7 +15,7 @@ SDK PRs #20 to #23 are merged, and this site (PR #1 here) uses them; its `vendor
 | 2 | Export the parts a skin copies | Done, one follow-up: `ctx.part('regenerate' \| 'photo' \| 'map')` (SDK #21). This site still has its own Regenerate markup; needs a class or wrapper option |
 | 3 | Data templates were missing | Done (SDK #22): `plan` gets `id`, `status`, `request`, `actions`; `progress` gets `values`; `restart` gets `{ failed }` |
 | 4 | Expose the visitor's session | Done (SDK #23): `widget.headers()`, `createAnonymousAuth` exported |
-| 5 | Platform: experience on plan activities | **Next**, not started (`st-platform`) |
+| 5 | Platform: experience on plan activities | Platform half done: st-platform PR #81 (`experience` on each activity, REST, versions and broadcast). **Left:** once it is on the dev platform, add `experience?` to `PlanActivity` in the SDK (`core/plan.ts`, keep it through `foldActivity` and `mergeDocument`), then delete `watchExperiences()` here |
 | 6 | Platform: fix `GET /api/v1/experiences` | Not started |
 | 7 | "Build a theme" guide | Not started. Write it after the remaining SDK items; extend `skin-guide.test.ts` to check it |
 | 8 to 11 | P2: text hook, guide patterns, state attribute, progress | Not started |
@@ -24,7 +24,7 @@ SDK PRs #20 to #23 are merged, and this site (PR #1 here) uses them; its `vendor
 Still unverified in the site (carried from the PR #1 description): a failed run (the "Try again" footer), Stop, Share, print preview, narrow widths, a full
 Swap stop run, and photos that filled slowly in some runs. The site's `config.js` is committed and points at `https://api.development.simplified.travel`;
 that platform allows `http://localhost:5190` through CORS, so local testing uses the dev API, not Sail. The "workaround this removes" lines below are done
-for items 1, 3 and 4 and partly for 2. Items 5 and 6 are what remains of the site's own workarounds (the per-experience fetch in `js/site.js`).
+for items 1, 3 and 4 and partly for 2. Items 5 (SDK half) and 6 are what remains of the site's own workarounds (the per-experience fetch in `js/site.js`).
 
 ## Read first (for the agent doing this work)
 
