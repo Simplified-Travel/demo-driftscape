@@ -51,12 +51,6 @@
         return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
     }
 
-    // This site says "plan", never "itinerary": the generator's thoughts ("Working on the perfect itinerary: ...") and its
-    // text say otherwise, so every piece of generated text goes through here.
-    function term(text) {
-        return String(text).replace(/itineraries/gi, 'plans').replace(/itinerary/gi, 'plan');
-    }
-
     function regenerateMarkup(a, ctx, view, name) {
         var regen = ctx.regeneration;
         if (!regen.regenerable) return { button: '', form: '' };
@@ -93,6 +87,11 @@
     /* ---------- The templates ---------- */
 
     SimplifiedTravel.configure({
+        // This site says "plan", never "itinerary", and the generator's text (thoughts, details, lists) says otherwise:
+        // the SDK passes all of it through here before any template sees it.
+        transformText: function (text) {
+            return text.replace(/itineraries/gi, 'plans').replace(/itinerary/gi, 'plan');
+        },
         messages: {
             'start again': 'Restart',
             'try again': 'Try again',
@@ -153,7 +152,7 @@
                         ${thoughts.length
                             ? html`<ul class="thoughts">
                                   ${thoughts.map(function (text, age) {
-                                      return html`<li data-st-age="${age}">${term(text)}</li>`;
+                                      return html`<li data-st-age="${age}">${text}</li>`;
                                   })}
                               </ul>`
                             : ''}
@@ -254,7 +253,7 @@
                         <div>
                             <h4>${name}</h4>
                             ${meta ? html`<span class="byline">${meta}</span>` : ''}
-                            <p>${term(a.details || '')}</p>
+                            <p>${a.details || ''}</p>
                             ${typeof loc.rating === 'number'
                                 ? html`<p class="byline">★ ${loc.rating}${loc.userRatingCount ? ' (' + Number(loc.userRatingCount).toLocaleString(ctx.locale) + ' ' + ctx.t('reviews') + ')' : ''}</p>`
                                 : ''}
@@ -273,7 +272,7 @@
                 return html`
                     <article class="day" data-st="list" data-st-key="list-${list.key}" data-st-list="${list.key}">
                         <h3>${ctx.t(list.key)}</h3>
-                        <ul class="notes">${list.items.map(function (item) { return html`<li>${term(item)}</li>`; })}</ul>
+                        <ul class="notes">${list.items.map(function (item) { return html`<li>${item}</li>`; })}</ul>
                     </article>
                 `;
             },
